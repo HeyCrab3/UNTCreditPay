@@ -15,8 +15,15 @@ export default {
       '/devapi': {
           target: 'https://uegapi.moyudalu.com',
           changeOrigin: true,
+          secure: false,
           rewrite: path => path.replace(/^\/devapi/, '')
-        }
+        },
+        '/apiv2': {
+          target: 'https://bbs.acozycotage.net/api/',
+          changeOrigin: true,
+          secure: false,
+          rewrite: path => path.replace(/^\/apiv2/, '')
+        },
     }
   }
 };

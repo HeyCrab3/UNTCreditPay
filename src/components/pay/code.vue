@@ -15,7 +15,7 @@
         </van-cell-group>
     </van-tab>
     <van-tab title="NFC">
-
+      <el-result icon="error" title="NFC 不可用" :sub-title=errorinfo style="display: {{ iserror }}; margin-top: 20px"></el-result>
     </van-tab>
     </van-tabs>
   </div>
@@ -44,6 +44,8 @@ function randomNum(n) {
   return res;
 }
 let originalcode = randomNum(16)
+let iserror = ref('hide');
+let errorinfo = ref(null)
 const barcodeLink = ref(`http://www.t-x-m.com/barcode.asp?bc1=${originalcode}&bc2=10&bc3=3.5&bc4=1.2&bc5=0&bc6=1&bc7=Arial&bc8=15&bc9=1`)
 const qrcodeLink = ref(`http://www.t-x-m.com/QRCode/qrcode.asp?bc1=${originalcode}&bc2=33&bc3=3.5&bc4=3.5&bc5=1&bc6=1&bc7=1&bc8=5&bc9=1`)
 let showCode = ref(originalcode.substring(0,4) + " **** **** ****")
@@ -57,5 +59,15 @@ const hcCode = () => {
     }else{
         showCode.value = originalcode.substring(0,4) + " **** **** ****";
     }
+}
+
+try{
+  var NFCInstance = new NDEFMessage(originalcode);
+  console.log(NFCInstance)
+}
+catch (error){
+  console.error(`错误：NFC无法初始化 ${error}`)
+  iserror.value = "show"
+  errorinfo.value = `当前环境不支持NFC功能\n${error}`
 }
 </script>
