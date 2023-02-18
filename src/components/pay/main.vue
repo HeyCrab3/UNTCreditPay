@@ -142,39 +142,54 @@
 <script setup>
 import { Money, Coin, Tickets, Service } from '@element-plus/icons-vue';
 import Axios from 'axios'
+import { VerifySessionV2, GetUserBasicInfo } from '../../modules/AccountProvider';
+import { isPassedVerifictionInt, GetStatusCode } from '../../modules/StatusCodeParser'
 import { ref } from 'vue'
 import { GetCookie } from '../../modules/CookieHelper';
-import { GetStatusCode, isPassedVerifictionInt } from '../../modules/StatusCodeParser';
 import router from '../router';
 import { showLoadingToast, showSuccessToast, showFailToast } from 'vant'
 import { ElMessage } from 'element-plus';
 let loading = ref(true)
 // 开发测试占位符开始
-let username = ref('我是妮露的狗')
+let username = ref('****')
 let card = ref('4321001157176633')
-let balance = ref(49185.1)
+let balance = ref(0)
 
 // 开发测试占位符结束
 const goPay = () => {
     router.push('pay')
 }
 Axios({
-    url: '/devapi/account/user/verifyCode',
+    url: '/devapi/account/user/verifyCodeV2',
     headers: {'Authorization': GetCookie('access_token')}
 })
 .then(function(Response){
-    var result = isPassedVerifictionInt(GetStatusCode(Response),200)
+    const result = isPassedVerifictionInt(GetStatusCode(Response), 200)
     if (result == true){
-        console.log('登录态正常')
+        console.log('OK')
     }else{
         ElMessage.warning('登录已失效，请重新登录')
-        showFailToast(Response['data']['msg'])
         router.push('login')
     }
-    loading.value = false;
 })
 .catch(function(error){
-    ElMessage.error(`错误: ${error.message} (${error.code})`)
-    showFailToast(`错误: ${error.message} (${error.code})`)
+    ElMessage.error(`当前不能同步登录数据: ${error.message} (${error.code})`)
+})
+Axios({
+    url: '/devapi/account/user/getUserInfoV2',
+    headers: {'Authorization': GetCookie('access_token')}
+})
+.then(function(Response){
+    const result = isPassedVerifictionInt(GetStatusCode(Response), 200)
+    loading.value = false;
+    if (result == true){
+        console.log(Response['data'])
+        username.value = Response.data.data.nickname + ` (UID ${Response.data.data.uuid})`
+    }else{
+        ElMessage.warning('当前不能同步登录数据: ' + Response['data']['msg'])
+    }
+})
+.catch(function(error){
+    ElMessage.error(`当前不能同步用户数据: ${error.message} (${error.code})`)
 })
 </script>

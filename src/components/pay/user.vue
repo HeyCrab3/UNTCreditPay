@@ -8,8 +8,8 @@
         <el-scrollbar class="scrollbar-flex-content" style="height: 100%;">
             <div style="height: 100%;">
                 <div class="h">
-                    <el-avatar></el-avatar>
-                    <span style="font-size: var(--el-font-size-medium); display: inline-block; margin-left: 10px; position: relative; top: -15px;">用户名</span>
+                    <el-avatar :src="userAvatar"></el-avatar>
+                    <span style="font-size: var(--el-font-size-medium); display: inline-block; margin-left: 10px; position: relative; top: -15px;">{{username}}</span>
                 </div>
                 <van-cell-group style="box-shadow: 0px 0px 2px #cccccc;" inset title="我的支付">
                     <van-cell is-link title="卡包" />
@@ -21,7 +21,7 @@
                 </van-cell-group>
                 <van-cell-group style="box-shadow: 0px 0px 2px #cccccc;" inset title="设置">
                     <van-cell is-link title="隐私政策" />
-                    <van-cell is-link title="关于我们" />
+                    <van-cell is-link to="about" title="关于我们" />
                 </van-cell-group>
             </div>
         </el-scrollbar>
@@ -112,28 +112,43 @@ import { showLoadingToast, showSuccessToast, showFailToast } from 'vant'
 import { ElMessage } from 'element-plus';
 let loading = ref(true)
 // 开发测试占位符开始
-let username = ref('我是妮露的狗')
+let username = ref('****')
+let userAvatar = ref(null)
 // 开发测试占位符结束
 const goPay = () => {
     router.push('pay')
 }
 Axios({
-    url: '/devapi/account/user/verifyCode',
+    url: '/devapi/account/user/verifyCodeV2',
     headers: {'Authorization': GetCookie('access_token')}
 })
 .then(function(Response){
-    var result = isPassedVerifictionInt(GetStatusCode(Response),200)
+    const result = isPassedVerifictionInt(GetStatusCode(Response), 200)
     if (result == true){
-        console.log('登录态正常')
+        console.log('OK')
     }else{
         ElMessage.warning('登录已失效，请重新登录')
-        showFailToast(Response['data']['msg'])
-        router.push('login')
     }
-    loading.value = false;
 })
 .catch(function(error){
-    ElMessage.error(`错误: ${error.message} (${error.code})`)
-    showFailToast(`错误: ${error.message} (${error.code})`)
+    ElMessage.error(`当前不能同步登录数据: ${error.message} (${error.code})`)
+})
+Axios({
+    url: '/devapi/account/user/getUserInfoV2',
+    headers: {'Authorization': GetCookie('access_token')}
+})
+.then(function(Response){
+    const result = isPassedVerifictionInt(GetStatusCode(Response), 200)
+    loading.value = false;
+    if (result == true){
+        console.log(Response['data'])
+        username.value = Response.data.data.nickname + ` (UID ${Response.data.data.uuid})`
+        userAvatar.value = Response.data.data.headPortrait
+    }else{
+        ElMessage.warning('当前不能同步登录数据: ' + Response['data']['msg'])
+    }
+})
+.catch(function(error){
+    ElMessage.error(`当前不能同步用户数据: ${error.message} (${error.code})`)
 })
 </script>

@@ -8,7 +8,9 @@ import RegisterView from '../user/register.vue'
 import Userside_Main_Page from '../pay/main.vue'
 import Userside_Code_Page from '../pay/code.vue'
 import Userside_User_Page from '../pay/user.vue'
-// 管理员侧
+import Userside_MyService_Page from '../market/myservice.vue'
+import Userside_Aboutus_Page from '../pay/sub/aboutus.vue'
+// 管理员侧（已废弃）
 import Adminside_Login_Page from '../admin/login/main.vue'
 import Adminside_Console_Page from '../admin/console/index.vue'
 
@@ -47,6 +49,16 @@ const routes = [
         path: '/admin/index',
         name: '管理侧 主页（业务隔离）',
         component: Adminside_Console_Page
+    },
+    {
+        path: '/services',
+        name: '用户侧 我的服务',
+        component: Userside_MyService_Page
+    },
+    {
+        path: '/about',
+        name: '用户侧 关于',
+        component: Userside_Aboutus_Page
     }
 ]
 

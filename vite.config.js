@@ -24,6 +24,12 @@ export default {
           secure: false,
           rewrite: path => path.replace(/^\/apiv2/, '')
         },
+        '/bbs-proxy': {
+          target: 'https://bbs.acozycotage.net/',
+          changeOrigin: true,
+          secure: false,
+          rewrite: path => path.replace(/^\/bbs-proxy/, '')
+        },
     }
   }
 };

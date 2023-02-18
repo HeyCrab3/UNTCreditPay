@@ -3,11 +3,11 @@
 </style>
 <template>
     <div v-loading="loading">
-        <van-nav-bar title="我的服务" 
+        <van-nav-bar title="我的服务" />
         <el-backtop :right="100" :bottom="100" />
         <el-scrollbar>
             <div class="scrollbar-flex-content">
-                <span style="font-size: 1.75rem">你好，领航员</span>
+                <el-alert type="warning" title="此为第三方服务，由此带来的风险我们概不负责" :closeable="false" show-icon />
             </div>
         </el-scrollbar>
         <van-tabbar route bind:change="onChange">

@@ -11,7 +11,7 @@
         <img :src=barcodeLink alt="code" style="position:relative; top: 20px; margin: auto; width: 95%; display: block"/>
         <img :src=qrcodeLink alt="qr" style="margin-top: 10px; width: 150px"/>
         <van-cell-group inset style="box-shadow: 0px 0px 1px #cccccc;">
-            <van-cell title="粉末银行（6331）" value="优先使用此方式付款" is-link/>
+            <van-cell title="你的信用点钱包" value="优先使用此方式付款" is-link disabled/>
         </van-cell-group>
     </van-tab>
     <van-tab title="NFC">
@@ -34,6 +34,8 @@
 </style>
 <script setup>
 import router from '../router';
+import Axios from 'axios';
+import { GetCookie } from '../../modules/CookieHelper';
 import { View } from '@element-plus/icons-vue';
 import { ref } from 'vue';
 function randomNum(n) {
@@ -52,6 +54,22 @@ let showCode = ref(originalcode.substring(0,4) + " **** **** ****")
 const goBack = () => {
     router.push('/')
 }
+
+Axios({
+    url: '/devapi/account/user/verifyCodeV2',
+    headers: {'Authorization': GetCookie('access_token')}
+})
+.then(function(Response){
+    const result = isPassedVerifictionInt(GetStatusCode(Response), 200)
+    if (result == true){
+        console.log('OK')
+    }else{
+        ElMessage.warning('登录已失效，请重新登录')
+    }
+})
+.catch(function(error){
+    ElMessage.error(`当前不能同步登录数据: ${error.message} (${error.code})`)
+})
 
 const hcCode = () => {
     if (showCode.value.includes('*')){
