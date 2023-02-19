@@ -10,6 +10,7 @@ import Userside_Code_Page from '../pay/code.vue'
 import Userside_User_Page from '../pay/user.vue'
 import Userside_MyService_Page from '../market/myservice.vue'
 import Userside_Aboutus_Page from '../pay/sub/aboutus.vue'
+import Userside_Exchange_Page from '../pay/sub/exchange.vue'
 // 管理员侧（已废弃）
 import Adminside_Login_Page from '../admin/login/main.vue'
 import Adminside_Console_Page from '../admin/console/index.vue'
@@ -59,6 +60,11 @@ const routes = [
         path: '/about',
         name: '用户侧 关于',
         component: Userside_Aboutus_Page
+    },
+    {
+        path: '/exchange',
+        name: '用户侧 转账',
+        component: Userside_Exchange_Page
     }
 ]
 

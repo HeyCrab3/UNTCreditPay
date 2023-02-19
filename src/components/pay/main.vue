@@ -24,8 +24,8 @@
                 <div id="services">
                     <span style="font-size: var(--el-font-size-extra-large)">我的服务</span>
                     <div class="card-group">
-                        <div @click="goPay"  class="service-card"><el-icon><Coin /></el-icon>收付款</div>
-                        <div class="service-card"><el-icon><Money /></el-icon>转账</div>
+                        <div @click="go('pay')"  class="service-card"><el-icon><Coin /></el-icon>收付款</div>
+                        <div @click="go('exchange')" class="service-card"><el-icon><Money /></el-icon>转账</div>
                         <div class="service-card"><el-icon><Tickets /></el-icon>账单</div>
                         <div class="service-card"><el-icon><Service /></el-icon>客服</div>
                     </div>
@@ -139,7 +139,7 @@
     padding: 20px;
 }
 </style>
-<script setup>
+<script lang="ts" setup>
 import { Money, Coin, Tickets, Service } from '@element-plus/icons-vue';
 import Axios from 'axios'
 import { VerifySessionV2, GetUserBasicInfo } from '../../modules/AccountProvider';
@@ -156,8 +156,8 @@ let card = ref('4321001157176633')
 let balance = ref(0)
 
 // 开发测试占位符结束
-const goPay = () => {
-    router.push('pay')
+const go = (url: string) => {
+    router.push(url)
 }
 Axios({
     url: '/devapi/account/user/verifyCodeV2',
