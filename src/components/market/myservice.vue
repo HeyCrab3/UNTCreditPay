@@ -2,7 +2,7 @@
 #app{ background: #FFF;}
 </style>
 <template>
-    <div v-loading="loading">
+    <div>
         <van-nav-bar title="我的服务" />
         <el-backtop :right="100" :bottom="100" />
         <el-scrollbar>
@@ -124,9 +124,10 @@ import { ref } from 'vue'
 import { GetCookie } from '../../modules/CookieHelper';
 import { GetStatusCode, isPassedVerifictionInt } from '../../modules/StatusCodeParser';
 import router from '../router';
-import { showLoadingToast, showSuccessToast, showFailToast } from 'vant'
+import { showLoadingToast, showSuccessToast, showFailToast, closeToast } from 'vant'
 import { ElMessage } from 'element-plus';
 let loading = ref(true)
+showLoadingToast('正在获取用户数据')
 Axios({
     url: '/devapi/account/user/verifyCode',
     headers: {'Authorization': GetCookie('access_token')}
@@ -135,6 +136,7 @@ Axios({
     var result = isPassedVerifictionInt(GetStatusCode(Response),200)
     if (result == true){
         console.log('登录态正常')
+        closeToast(true)
     }else{
         ElMessage.warning('登录已失效，请重新登录')
         showFailToast(Response['data']['msg'])

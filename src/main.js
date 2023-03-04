@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./components/router";
 // import "~/styles/element/index.scss";
-
+import 'vant/es/toast/style';
 import ElementPlus from "element-plus";
 // import all element css, uncommented next line
 // import "element-plus/dist/index.css";

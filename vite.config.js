@@ -25,7 +25,7 @@ export default {
           rewrite: path => path.replace(/^\/apiv2/, '')
         },
         '/bbs-proxy': {
-          target: 'https://bbs.acozycotage.net/',
+          target: 'https://bbs.ungov.net/',
           changeOrigin: true,
           secure: false,
           rewrite: path => path.replace(/^\/bbs-proxy/, '')

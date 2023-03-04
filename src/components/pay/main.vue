@@ -2,7 +2,7 @@
 #app{ background: #FFF;}
 </style>
 <template>
-    <div v-loading="loading">
+    <div>
         <div class="header">
             <h2 style="margin: 0">UNT Credit Pay</h2><br/>
             <span>由 粉末信用点发行中心 提供服务 <el-tag type="primary">测试版</el-tag></span>
@@ -147,14 +147,24 @@ import { isPassedVerifictionInt, GetStatusCode } from '../../modules/StatusCodeP
 import { ref } from 'vue'
 import { GetCookie } from '../../modules/CookieHelper';
 import router from '../router';
-import { showLoadingToast, showSuccessToast, showFailToast } from 'vant'
+import { showLoadingToast, showSuccessToast, showFailToast, closeToast } from 'vant'
 import { ElMessage } from 'element-plus';
-let loading = ref(true)
 // 开发测试占位符开始
 let username = ref('****')
 let card = ref('4321001157176633')
 let balance = ref(0)
+showLoadingToast('正在获取用户数据')
 
+function _isMobile() {
+      let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
+      return flag;
+}
+
+if (!_isMobile()) {
+      router.replace('/agent');
+} else {
+      console.log('ok')
+}
 // 开发测试占位符结束
 const go = (url: string) => {
     router.push(url)
@@ -167,8 +177,9 @@ Axios({
     const result = isPassedVerifictionInt(GetStatusCode(Response), 200)
     if (result == true){
         console.log('OK')
+        closeToast(true)
     }else{
-        ElMessage.warning('登录已失效，请重新登录')
+        showFailToast('登录已失效，请重新登录')
         router.push('login')
     }
 })
@@ -181,7 +192,6 @@ Axios({
 })
 .then(function(Response){
     const result = isPassedVerifictionInt(GetStatusCode(Response), 200)
-    loading.value = false;
     if (result == true){
         console.log(Response['data'])
         username.value = Response.data.data.nickname + ` (UID ${Response.data.data.uuid})`

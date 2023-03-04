@@ -108,12 +108,12 @@ import { ref } from 'vue'
 import { GetCookie } from '../../modules/CookieHelper';
 import { GetStatusCode, isPassedVerifictionInt } from '../../modules/StatusCodeParser';
 import router from '../router';
-import { showLoadingToast, showSuccessToast, showFailToast } from 'vant'
+import { showLoadingToast, showSuccessToast, showFailToast, closeToast } from 'vant'
 import { ElMessage } from 'element-plus';
-let loading = ref(true)
 // 开发测试占位符开始
 let username = ref('****')
 let userAvatar = ref(null)
+showLoadingToast('正在获取用户数据')
 // 开发测试占位符结束
 const goPay = () => {
     router.push('pay')
@@ -126,8 +126,9 @@ Axios({
     const result = isPassedVerifictionInt(GetStatusCode(Response), 200)
     if (result == true){
         console.log('OK')
+        closeToast(true)
     }else{
-        ElMessage.warning('登录已失效，请重新登录')
+        showFailToast('登录已失效，请重新登录')
     }
 })
 .catch(function(error){
@@ -139,7 +140,6 @@ Axios({
 })
 .then(function(Response){
     const result = isPassedVerifictionInt(GetStatusCode(Response), 200)
-    loading.value = false;
     if (result == true){
         console.log(Response['data'])
         username.value = Response.data.data.nickname + ` (UID ${Response.data.data.uuid})`

@@ -54,41 +54,17 @@ import { ElMessage, ElLoading } from 'element-plus'
 import * as $ from 'jquery'
 const username = ref(null)
 const password = ref(null)
-const code = ref(null)
 const isLoading = ref(false)
-initGeetest4({
-    captchaId: '5666833fd0cffc1ec7b2ec903bfffcd9',
-    product: 'bind'
-}, function(captchaObj){
-    window.captcha1 = captchaObj;
-    captchaObj.onReady(function(){
-        console.log('邮箱验证码 ok')
-    }).onSuccess(function(){
-        const loading = ElLoading.service()
-        showLoadingToast('请稍等')
-        var result = captchaObj.getValidate();
-        Axios.get(`/devapi/account/user/sendCode?value=${username.value}&captcha_id=5666833fd0cffc1ec7b2ec903bfffcd9&lot_number=${result.lot_number}&captcha_output=${result.captcha_output}&pass_token=${result.pass_token}&gen_time=${result.gen_time}`)
-        .then(function(Response){
-            const result = isPassedVerifictionInt(GetStatusCode(Response), 200)
-            loading.close();
-            if (result == true){
-                showSuccessToast('验证码发送成功')
-                ElMessage.success(Response['data']['msg'])
-            }else{
-                ElMessage.error(Response['data']['msg'])
-                showFailToast(Response['data']['msg'])
-                captchaObj.reset();
-            }
-        })
-        .catch(function(error){
-            ElMessage.error(`错误: ${error.message} (${error.code})`)
-            showFailToast(`错误: ${error.message} (${error.code})`)
-        })
-    }).onError(function(){
-        ElMessage.error(`验证码代码逻辑错误`)
-        showFailToast('验证码代码逻辑错误')
-    })
-})
+function _isMobile() {
+      let flag = navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
+      return flag;
+}
+
+if (!_isMobile()) {
+      router.replace('/agent');
+} else {
+      console.log('ok')
+}
 initGeetest4({
     captchaId: '5666833fd0cffc1ec7b2ec903bfffcd9',
     product: 'bind'
@@ -98,6 +74,10 @@ initGeetest4({
         console.log('登录验证码 ok')
     }).onSuccess(function(){
         isLoading.value = true;
+        showLoadingToast({
+            message: '正在登录',
+            forbidClick: true
+        });
         var result = captchaObj.getValidate();
         var data = {
             user: username.value,
@@ -114,23 +94,19 @@ initGeetest4({
             isLoading.value = false;
             if (result == true){
                 showSuccessToast('登陆成功')
-                ElMessage.success('登陆成功')
                 SetCookie('access_token', Response['data']['data']['token'])
                 SetCookie('waq-timestamp', Date.now())
                 SetCookie('wap-logreporter',true)
                 router.push('/')
             }else{
-                ElMessage.error(Response['data']['msg'])
                 showFailToast(Response['data']['msg'])
             }
         })
         .catch(function(error){
-            ElMessage.error(`错误: ${error.message} (${error.code})`)
             showFailToast(`错误: ${error.message} (${error.code})`)
             isLoading.value = false;
         })
     }).onError(function(){
-        ElMessage.error(`验证码代码逻辑错误`)
         showFailToast('验证码代码逻辑错误')
     })
 })
