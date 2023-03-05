@@ -28,16 +28,19 @@
             </el-header>
             <el-main>
                 <el-scrollbar style="padding: 20px;">
-                    <div class="mdui-typo"><h2>商户主页</h2></div>
-                    <el-card class="box-card">
-                        <template #header>
-                            <div class="card-header">
-                                <span>业绩</span>
-                                <el-button class="button" text>操作1</el-button>
-                            </div>
-                        </template>
-                        114,514
-                    </el-card>
+                    <div class="mdui-typo"><h2>收款 <small> 演示环境</small></h2></div>
+                    <div class="pay-container">
+                        <el-alert type="warning" show-icon title="建设中，此页面目前无作用"/>
+                    </div>
+                    <div class="pay-container">
+                        <el-input clearable maxlength="16" size="large" v-model="code" placeholder="输入付款码"><template #prefix><el-icon><CreditCard/></el-icon></template></el-input>
+                    </div>
+                    <div class="pay-container">
+                        <el-input clearable :formatter="(value) => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')" :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')" size="large" v-model="pay" placeholder="金额"><template #prefix><el-icon><Money/></el-icon></template></el-input>
+                    </div>
+                    <div class="pay-container">
+                        <el-button @click="demo" class="mdui-ripple mdui-ripple-white" color="#662CEF" type="primary" size="large">结算</el-button>
+                    </div>
                 </el-scrollbar>
             </el-main>
         </el-container>
@@ -53,6 +56,10 @@
   right: 20px;
 }
 
+.pay-container{
+    max-width: 50%;
+    margin-top: 20px;
+}
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -82,16 +89,27 @@
 </style>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { Menu as IconMenu, Message, Setting, House, Money } from '@element-plus/icons-vue'
+import { Menu as IconMenu, Message, Setting, House, Money, CreditCard } from '@element-plus/icons-vue'
 import { useRoute } from 'vue-router';
 import Axios from 'axios';
 import { GetCookie, RemoveCookie } from '../../modules/CookieHelper';
 import { GetStatusCode, isPassedVerifictionInt } from '../../modules/StatusCodeParser';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import router from '../router';
-document.title = "商户主页 | CreditPay"
+document.title = "收款 | CreditPay"
 const username = ref(null)
 const route = useRoute();
+const code = ref(null)
+const pay = ref(null)
+const demo = () =>{
+    if(code.value == null && pay.value == null){
+        ElMessage.error('表单填写不完整！')
+    }else{
+        ElMessage.success(`从 ${code.value} 中收款 ${pay.value} 成功`);
+        code.value = null;
+        pay.value = null;
+    }
+}
 
 const logout = () => {
     ElMessageBox.confirm(

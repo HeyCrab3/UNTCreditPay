@@ -15,6 +15,7 @@ import Userside_Exchange_Page from '../pay/sub/exchange.vue'
 // 商家侧
 import Marketside_Login_Page from '../market/login.vue'
 import Marketside_Home_Page from '../market/home.vue'
+import Marketside_Pay_Page from '../market/pay.vue'
 // 管理员侧（已废弃）
 import Adminside_Login_Page from '../admin/login/main.vue'
 import Adminside_Console_Page from '../admin/console/index.vue'
@@ -79,6 +80,11 @@ const routes = [
         path: '/market/home',
         name: '商家侧 主页',
         component: Marketside_Home_Page
+    },
+    {
+        path: '/market/pay',
+        name: '商家侧 收款',
+        component: Marketside_Pay_Page
     },
     {
         path: '/agent',
