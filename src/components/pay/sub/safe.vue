@@ -3,33 +3,10 @@
 </style>
 <template>
     <div style="height: 100%;" v-loading="loading">
-        <van-nav-bar title="用户主页" />
-        <el-backtop :right="100" :bottom="100" />
-        <el-scrollbar class="scrollbar-flex-content" style="height: 100%;">
-            <div style="height: 100%;">
-                <div class="h">
-                    <el-avatar :src="userAvatar"></el-avatar>
-                    <span style="font-size: var(--el-font-size-medium); display: inline-block; margin-left: 10px; position: relative; top: -15px;">{{username}}</span>
-                </div>
-                <van-cell-group style="box-shadow: 0px 0px 2px #cccccc;" inset title="我的支付">
-                    <van-cell is-link title="卡包" />
-                    <van-cell is-link title="券包" />
-                </van-cell-group>
-                <van-cell-group style="box-shadow: 0px 0px 2px #cccccc;" inset title="账号与安全">
-                    <van-cell is-link title="基本信息" />
-                    <van-cell is-link to="safe" title="安全中心" />
-                </van-cell-group>
-                <van-cell-group style="box-shadow: 0px 0px 2px #cccccc;" inset title="设置">
-                    <van-cell is-link title="隐私政策" />
-                    <van-cell is-link to="about" title="关于我们" />
-                </van-cell-group>
-            </div>
-        </el-scrollbar>
-        <van-tabbar route bind:change="onChange">
-            <van-tabbar-item to="/" icon="home-o">主页</van-tabbar-item>
-            <van-tabbar-item to="/services" icon="add-o">服务</van-tabbar-item>
-            <van-tabbar-item to="/user" icon="user-circle-o">我的</van-tabbar-item>
-        </van-tabbar>
+        <van-nav-bar title="安全中心" left-arrow @click-left="goBack"/>
+        <van-cell-group>
+            <van-cell is-link title="注销账户" />
+        </van-cell-group>
     </div>
 </template>
 <style>
@@ -105,16 +82,17 @@
 import { Money, Coin, Tickets, Service } from '@element-plus/icons-vue';
 import Axios from 'axios'
 import { ref } from 'vue'
-import { GetCookie } from '../../modules/CookieHelper';
-import { GetStatusCode, isPassedVerifictionInt } from '../../modules/StatusCodeParser';
-import router from '../router';
+import { GetCookie } from '../../../modules/CookieHelper';
+import { GetStatusCode, isPassedVerifictionInt } from '../../../modules/StatusCodeParser';
+import router from '../../router';
 import { showLoadingToast, showSuccessToast, showFailToast, closeToast } from 'vant'
 import { ElMessage } from 'element-plus';
-// 开发测试占位符开始
 let username = ref('****')
 let userAvatar = ref(null)
 showLoadingToast('正在获取用户数据')
-// 开发测试占位符结束
+const goBack = () => {
+    router.push('user');
+}
 const goPay = () => {
     router.push('pay')
 }

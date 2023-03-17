@@ -35,9 +35,13 @@
 <script setup>
 import router from '../router';
 import Axios from 'axios';
+import { showFailToast, showDialog } from 'vant';
+import { isPassedVerifictionInt, GetStatusCode } from '../../modules/StatusCodeParser';
 import { GetCookie } from '../../modules/CookieHelper';
 import { View } from '@element-plus/icons-vue';
 import { ref } from 'vue';
+import { ElMessage } from 'element-plus';
+
 function randomNum(n) {
   var res = "";
   for(var i=0;i<n;i++){
@@ -53,6 +57,72 @@ const qrcodeLink = ref(`http://www.t-x-m.com/QRCode/qrcode.asp?bc1=${originalcod
 let showCode = ref(originalcode.substring(0,4) + " **** **** ****")
 const goBack = () => {
     router.push('/')
+}
+
+Axios({
+  method: "POST",
+  url: "/apiv2/registerPaycode",
+  data: {'access_token': GetCookie('access_token'), "payCode": originalcode}
+})
+.then(function(Response){
+    const result = isPassedVerifictionInt(GetStatusCode(Response), 0)
+    if (result == true){
+        console.log('付款码注册成功')
+    }else{
+        const result1 = isPassedVerifictionInt(GetStatusCode(Response), 404)
+        if (result1 == true){
+            showFailToast('账号未初始化')
+            router.push('setup')
+        }else{
+            const result2 = isPassedVerifictionInt(GetStatusCode(Response), 407)
+            if (result2 == true){
+                showFailToast('付款码无效')
+            }else{
+                showFailToast('服务错误')
+            }
+        }
+    }
+})
+.catch(function(error){
+    ElMessage.error(`发生错误: ${error.message} (${error.code})`)
+})
+
+var b = setInterval(getCodeStatus, 1000)
+
+function getCodeStatus(){
+  Axios({
+    method: "POST",
+    url: "/apiv2/getPaycodeStatus",
+    data: {'access_token': GetCookie('access_token'), "payCode": originalcode}
+  })
+  .then(function(Response){
+      const result = isPassedVerifictionInt(GetStatusCode(Response), 0)
+      if (result == true){
+          console.log(result)
+          if (Response['data']['msg'] == "支付成功"){
+            clearInterval(b)
+            var a1 = JSON.parse(Response['data']['data'])
+            showDialog({
+              title: '支付成功',
+              message: `在 ${a1['merchant']} 支付了 ${a1['value']}C 信用点`,
+              theme: 'round-button',
+            }).then(() => {
+              router.push('/#')
+            });
+          }
+      }else{
+          const result1 = isPassedVerifictionInt(GetStatusCode(Response), 404)
+          if (result1 == true){
+              showFailToast('账号未初始化')
+              router.push('setup')
+          }else{
+              showFailToast('服务错误')
+          }
+      }
+  })
+  .catch(function(error){
+      ElMessage.error(`发生错误: ${error.message} (${error.code})`)
+  })
 }
 
 Axios({

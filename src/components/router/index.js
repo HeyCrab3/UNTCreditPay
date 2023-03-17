@@ -7,11 +7,14 @@ import RegisterView from '../user/register.vue'
 import AgentSelection from '../../select-agent.vue'
 // 用户侧
 import Userside_Main_Page from '../pay/main.vue'
+import Userside_Setup_Page from '../pay/setup.vue'
 import Userside_Code_Page from '../pay/code.vue'
 import Userside_User_Page from '../pay/user.vue'
 import Userside_MyService_Page from '../market/myservice.vue'
 import Userside_Aboutus_Page from '../pay/sub/aboutus.vue'
 import Userside_Exchange_Page from '../pay/sub/exchange.vue'
+import Userside_Safe_Page from '../pay/sub/safe.vue'
+import Userside_List_Page from '../pay/sub/list.vue'
 // 商家侧
 import Marketside_Login_Page from '../market/login.vue'
 import Marketside_Home_Page from '../market/home.vue'
@@ -37,6 +40,16 @@ const routes = [
         component: Userside_Main_Page
     },
     {
+        path: '/list',
+        name: '用户侧 账单',
+        component: Userside_List_Page
+    },
+    {
+        path: '/setup',
+        name: '用户侧 设置卡片',
+        component: Userside_Setup_Page
+    },
+    {
         path: '/pay',
         name: '用户侧 付款码',
         component: Userside_Code_Page
@@ -45,6 +58,11 @@ const routes = [
         path: '/user',
         name: '用户侧 用户首页',
         component: Userside_User_Page
+    },
+    {
+        path: '/safe',
+        name: '用户侧 安全中心',
+        component: Userside_Safe_Page
     },
     {
         path: '/admin/login',

@@ -19,7 +19,7 @@ export default {
           rewrite: path => path.replace(/^\/devapi/, '')
         },
         '/apiv2': {
-          target: 'https://bbs.acozycotage.net/api/',
+          target: 'http://192.168.3.15:11451',
           changeOrigin: true,
           secure: false,
           rewrite: path => path.replace(/^\/apiv2/, '')

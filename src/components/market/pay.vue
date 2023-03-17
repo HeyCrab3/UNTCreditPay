@@ -33,13 +33,19 @@
                         <el-alert type="warning" show-icon title="建设中，此页面目前无作用"/>
                     </div>
                     <div class="pay-container">
-                        <el-input clearable maxlength="16" size="large" v-model="code" placeholder="输入付款码"><template #prefix><el-icon><CreditCard/></el-icon></template></el-input>
+                        <el-input :disabled="isLoading" clearable size="large" v-model="merchantName" placeholder="商户名称"><template #prefix><el-icon><Shop/></el-icon></template></el-input>
                     </div>
                     <div class="pay-container">
-                        <el-input clearable :formatter="(value) => `￥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')" :parser="(value) => value.replace(/\￥\s?|(,*)/g, '')" size="large" v-model="pay" placeholder="金额"><template #prefix><el-icon><Money/></el-icon></template></el-input>
+                        <el-input :disabled="isLoading" clearable size="large" v-model="details" placeholder="给用户的详情信息"><template #prefix><el-icon><ShoppingBag/></el-icon></template></el-input>
                     </div>
                     <div class="pay-container">
-                        <el-button @click="demo" class="mdui-ripple mdui-ripple-white" color="#662CEF" type="primary" size="large">结算</el-button>
+                        <el-input :disabled="isLoading" clearable maxlength="16" size="large" v-model="code" placeholder="输入付款码"><template #prefix><el-icon><CreditCard/></el-icon></template></el-input>
+                    </div>
+                    <div class="pay-container">
+                        <el-input :disabled="isLoading" clearable size="large" v-model="pay" placeholder="金额"><template #prefix><el-icon><Money/></el-icon></template><template #append>C</template></el-input>
+                    </div>
+                    <div class="pay-container">
+                        <el-button :loading="isLoading" @click="pays" class="mdui-ripple mdui-ripple-white" color="#662CEF" type="primary" size="large">结算</el-button>
                     </div>
                 </el-scrollbar>
             </el-main>
@@ -89,7 +95,7 @@
 </style>
 <script lang="ts" setup>
 import { ref } from 'vue';
-import { Menu as IconMenu, Message, Setting, House, Money, CreditCard } from '@element-plus/icons-vue'
+import { Menu as IconMenu, Message, Setting, House, Money, CreditCard, ShoppingBag, Shop } from '@element-plus/icons-vue'
 import { useRoute } from 'vue-router';
 import Axios from 'axios';
 import { GetCookie, RemoveCookie } from '../../modules/CookieHelper';
@@ -99,15 +105,42 @@ import router from '../router';
 document.title = "收款 | CreditPay"
 const username = ref(null)
 const route = useRoute();
+const merchantName = ref(null)
+const details = ref(null)
 const code = ref(null)
 const pay = ref(null)
-const demo = () =>{
+const isLoading = ref(false)
+const pays = () =>{
     if(code.value == null && pay.value == null){
         ElMessage.error('表单填写不完整！')
     }else{
-        ElMessage.success(`从 ${code.value} 中收款 ${pay.value} 成功`);
-        code.value = null;
-        pay.value = null;
+        isLoading.value = true
+        Axios({
+            method: 'POST',
+            url: '/apiv2/pay',
+            data: {
+                access_token: GetCookie('waq-access_token'),
+                payCode: code.value,
+                merchantName: merchantName.value,
+                detail: details.value,
+                value: pay.value
+            }
+        })
+        .then(function(Response){
+            isLoading.value = false;
+            var isSuccess = isPassedVerifictionInt(GetStatusCode(Response), 0)
+            if (isSuccess == false){
+                ElMessage.error(Response.data['msg'])
+            }else{
+                ElMessage.success(`从 ${code.value} 中收款 ${pay.value} 成功`);
+                code.value = null;
+                pay.value = null;
+            }
+        })
+        .catch(function(error){
+            isLoading.value = false
+            ElMessage.error('错误：' + error)
+        })
     }
 }
 

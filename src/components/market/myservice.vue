@@ -36,7 +36,7 @@
     width: 90%;
     height: 100px;
     padding: 10px;
-    background: #ca3030;
+    background: #008aff;
     color: #FFF;
     text-align: center;
     border-radius: 10px;
@@ -53,7 +53,7 @@
     border-radius: 10px;
     margin-top: 10px;
     box-shadow: 0px 0px 10px #bbbbbb;
-    background: #ca3030;
+    background: #008aff;
     padding: 20px;
 }
 /* 以下为自适应布局 */

@@ -3,7 +3,7 @@
     <div class="app-info">
         <img style="width: 30%" src="/ueg-logo.png" alt="logo"/>
         <span style="font-size: var(--el-font-size-extra-large)">CreditPay</span>
-        <span style="font-size: var(--el-font-size-small); color: #b7b7b7">版本 v0.2.2.1</span>
+        <span style="font-size: var(--el-font-size-small); color: #b7b7b7">版本 v0.3.0</span>
     </div>
     <el-dialog v-model="isOpen" :title="title" width="100%" style="width: 100%; height: 100%;" center>
         <iframe :src="url" style="width: 100%; height: 100%; border: 0"></iframe>

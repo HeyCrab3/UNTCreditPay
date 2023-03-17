@@ -10,8 +10,9 @@
         <el-backtop :right="100" :bottom="100" />
         <el-scrollbar>
             <div class="scrollbar-flex-content">
-                <span style="font-size: 1.75rem">你好，领航员</span>
-                <span style="font-size: var(--el-font-size-extra-large); display: block; margin-top: 20px;">我的信用点钱包</span>
+                <!-- Bye -->
+                <!-- <span style="font-size: 1.75rem">你好，领航员</span> -->
+                <span style="font-size: var(--el-font-size-extra-large); display: block; margin-top: 0;">我的信用点钱包</span>
                 <div class="credit-card">
                     <img src="/card.png" style="display: block; float: right; width: 50px" alt="卡面"/>
                     <span style="font-size: var(--el-font-size-extra-large)"> {{ username }} </span><br/>
@@ -26,7 +27,7 @@
                     <div class="card-group">
                         <div @click="go('pay')"  class="service-card"><el-icon><Coin /></el-icon>收付款</div>
                         <div @click="go('exchange')" class="service-card"><el-icon><Money /></el-icon>转账</div>
-                        <div class="service-card"><el-icon><Tickets /></el-icon>账单</div>
+                        <div @click="go('list')" class="service-card"><el-icon><Tickets /></el-icon>账单</div>
                         <div class="service-card"><el-icon><Service /></el-icon>客服</div>
                     </div>
                 </div>
@@ -58,7 +59,7 @@
     width: 90%;
     height: 100px;
     padding: 10px;
-    background: #ca3030;
+    background: #008aff;
     color: #FFF;
     text-align: center;
     border-radius: 10px;
@@ -75,7 +76,7 @@
     border-radius: 10px;
     margin-top: 10px;
     box-shadow: 0px 0px 10px #bbbbbb;
-    background: #ca3030;
+    background: #008aff;
     padding: 20px;
 }
 /* 以下为自适应布局 */
@@ -149,10 +150,9 @@ import { GetCookie } from '../../modules/CookieHelper';
 import router from '../router';
 import { showLoadingToast, showSuccessToast, showFailToast, closeToast } from 'vant'
 import { ElMessage } from 'element-plus';
-// 开发测试占位符开始
 let username = ref('****')
-let card = ref('4321001157176633')
-let balance = ref(0)
+let card = ref('***')
+let balance = ref(undefined)
 showLoadingToast('正在获取用户数据')
 
 function _isMobile() {
@@ -165,7 +165,32 @@ if (!_isMobile()) {
 } else {
       console.log('ok')
 }
-// 开发测试占位符结束
+
+Axios({
+    method: 'POST',
+    url: '/apiv2/getCardInfo',
+    data: {'access_token': GetCookie('access_token')}
+})
+.then(function(Response){
+    const result = isPassedVerifictionInt(GetStatusCode(Response), 0)
+    if (result == true){
+        console.log(result)
+        card.value = Response.data['data']['cardNo']
+        balance.value = Response.data['data']['balance']
+    }else{
+        const result1 = isPassedVerifictionInt(GetStatusCode(Response), 404)
+        if (result1 == true){
+            showFailToast('账号未初始化')
+            router.push('setup')
+        }else{
+            showFailToast('卡片数据同步失败，请联系管理员')
+        }
+    }
+})
+.catch(function(error){
+    ElMessage.error(`当前不能同步卡片数据: ${error.message} (${error.code})`)
+})
+
 const go = (url: string) => {
     router.push(url)
 }

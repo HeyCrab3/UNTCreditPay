@@ -4,12 +4,12 @@
 <style scoped>
 @font-face {
   font-family: Montserrat;
-  src: url(./assets/Montserrat-Regular-8.woff2);
+  src: url(/Montserrat-Regular-8.woff2);
 }
 
 @font-face {
   font-family: HYYuanLongHei;
-  src: url(./assets/HYYuanLongHei60W.woff2);
+  src: url(/HYYuanLongHei60W.woff2);
 }
 
 body{
