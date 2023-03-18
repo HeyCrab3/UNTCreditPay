@@ -56,6 +56,7 @@ const barcodeLink = ref(`http://www.t-x-m.com/barcode.asp?bc1=${originalcode}&bc
 const qrcodeLink = ref(`http://www.t-x-m.com/QRCode/qrcode.asp?bc1=${originalcode}&bc2=33&bc3=3.5&bc4=3.5&bc5=1&bc6=1&bc7=1&bc8=5&bc9=1`)
 let showCode = ref(originalcode.substring(0,4) + " **** **** ****")
 const goBack = () => {
+    clearInterval(b)
     router.push('/')
 }
 

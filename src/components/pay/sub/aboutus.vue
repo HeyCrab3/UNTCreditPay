@@ -5,9 +5,9 @@
         <span style="font-size: var(--el-font-size-extra-large)">CreditPay</span>
         <span style="font-size: var(--el-font-size-small); color: #b7b7b7">版本 v0.3.0</span>
     </div>
-    <el-dialog v-model="isOpen" :title="title" width="100%" style="width: 100%; height: 100%;" center>
+    <el-drawer lock-scroll size="90%" v-model="isOpen" :title="title" direction="btt">
         <iframe :src="url" style="width: 100%; height: 100%; border: 0"></iframe>
-  </el-dialog>
+  </el-drawer>
   <van-cell style="margin-top: 30px" title="赞助我们" @click="openIFrameDialog('https://afdian.net/a/HeyCrab', '赞助我们！')" is-link />
   <van-cell title="用户协议" @click="openIFrameDialog('/bbs-proxy/help/contract/','用户协议')" is-link />
   <van-cell title="隐私政策" @click="openIFrameDialog('/bbs-proxy/help/privacy-policy/','隐私政策')" is-link />
